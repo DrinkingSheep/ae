@@ -1,8 +1,8 @@
 object GrapSForm: TGrapSForm
-  Left = 190
-  Top = 132
+  Left = 391
+  Top = 146
   AutoScroll = False
-  ClientHeight = 590
+  ClientHeight = 615
   ClientWidth = 644
   Color = clBtnFace
   Constraints.MinHeight = 560
@@ -21,14 +21,14 @@ object GrapSForm: TGrapSForm
   OnShow = FormShow
   DesignSize = (
     644
-    590)
+    615)
   PixelsPerInch = 96
   TextHeight = 11
   object I_Graps_View: TImage
     Left = 276
     Top = 0
     Width = 367
-    Height = 566
+    Height = 591
     Hint = 'Double-click to save...'
     Anchors = [akLeft, akTop, akRight, akBottom]
     ParentShowHint = False
@@ -39,7 +39,7 @@ object GrapSForm: TGrapSForm
     Left = 284
     Top = 9
     Width = 351
-    Height = 549
+    Height = 574
     Anchors = [akLeft, akTop, akRight, akBottom]
     BorderStyle = bsNone
     Color = clBtnFace
@@ -370,7 +370,7 @@ object GrapSForm: TGrapSForm
     Left = 0
     Top = 288
     Width = 276
-    Height = 284
+    Height = 305
     ActivePage = TabSheet1
     BiDiMode = bdLeftToRight
     HotTrack = True
@@ -383,7 +383,7 @@ object GrapSForm: TGrapSForm
         Left = 4
         Top = 2
         Width = 259
-        Height = 250
+        Height = 271
         Caption = ' Image properties '
         TabOrder = 0
         object L_Graps_Width: TLabelW
@@ -429,9 +429,9 @@ object GrapSForm: TGrapSForm
           OnChange = E_Graps_HeightChange
         end
         object CB_Graps_Bitdepth: TComboBox
-          Left = 187
+          Left = 200
           Top = 147
-          Width = 63
+          Width = 50
           Height = 19
           Style = csDropDownList
           ItemHeight = 11
@@ -491,15 +491,67 @@ object GrapSForm: TGrapSForm
           Checked = True
           State = cbChecked
           TabOrder = 6
+          OnClick = CB_Graps_HasPaletteClick
         end
         object E_Graps_PaletteOffset: TEdit
           Left = 96
           Top = 193
-          Width = 153
+          Width = 97
           Height = 19
           TabOrder = 7
           Text = '0'
           OnChange = E_Graps_OffsetChange
+        end
+        object CB_Graps_Palette_Bitdepth: TComboBox
+          Left = 200
+          Top = 193
+          Width = 50
+          Height = 19
+          Style = csDropDownList
+          ItemHeight = 11
+          ItemIndex = 0
+          TabOrder = 8
+          Text = '32'
+          OnChange = CB_Graps_Palette_BitdepthChange
+          Items.Strings = (
+            '32'
+            '24')
+        end
+        object CB_GrapS_ImageFlipVertical: TCheckBox
+          Left = 9
+          Top = 216
+          Width = 241
+          Height = 17
+          Caption = 'Vertical flip'
+          TabOrder = 9
+          OnClick = CB_GrapS_ImageFlipVerticalClick
+        end
+        object CB_GrapS_ColourSwap: TCheckBox
+          Left = 9
+          Top = 239
+          Width = 184
+          Height = 17
+          Caption = 'Colour swap'
+          TabOrder = 10
+          OnClick = CB_GrapS_ColourSwapClick
+        end
+        object CB_GrapS_ColourSwapMode: TComboBox
+          Left = 200
+          Top = 238
+          Width = 50
+          Height = 19
+          Style = csDropDownList
+          ItemHeight = 11
+          ItemIndex = 0
+          TabOrder = 11
+          Text = 'BGR'
+          OnChange = CB_GrapS_ColourSwapModeChange
+          Items.Strings = (
+            'BGR'
+            'BRG'
+            'GBR'
+            'GRB'
+            'RBG')
         end
       end
     end
@@ -568,22 +620,22 @@ object GrapSForm: TGrapSForm
       end
     end
   end
-  object StatusBar1: TStatusBar
+  object SB_Graps_ImageProperties: TStatusBar
     Left = 0
-    Top = 571
+    Top = 596
     Width = 644
     Height = 19
     Panels = <
       item
-        Text = '65535 x 65535'
+        Text = '0 x 0'
         Width = 100
       end
       item
-        Text = '256 bit'
+        Text = '0 bit'
         Width = 50
       end
       item
-        Text = 'C:\Windows\System32\Drivers\Etc\hosts'
+        Text = '(not a file)'
         Width = 0
       end>
   end

@@ -94,7 +94,11 @@ type
     CB_Graps_Interleaved: TCheckBox;
     CB_Graps_HasPalette: TCheckBox;
     E_Graps_PaletteOffset: TEdit;
-    StatusBar1: TStatusBar;
+    SB_Graps_ImageProperties: TStatusBar;
+    CB_Graps_Palette_Bitdepth: TComboBox;
+    CB_GrapS_ImageFlipVertical: TCheckBox;
+    CB_GrapS_ColourSwap: TCheckBox;
+    CB_GrapS_ColourSwapMode: TComboBox;
     procedure M_Graps_ExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure M_Graps_OpenFileClick(Sender: TObject);
@@ -132,6 +136,11 @@ type
     procedure T_Graps_AutoMemRefTimer(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormPaint(Sender: TObject);
+    procedure CB_Graps_Palette_BitdepthChange(Sender: TObject);
+    procedure CB_Graps_HasPaletteClick(Sender: TObject);
+    procedure CB_GrapS_ImageFlipVerticalClick(Sender: TObject);
+    procedure CB_GrapS_ColourSwapClick(Sender: TObject);
+    procedure CB_GrapS_ColourSwapModeChange(Sender: TObject);
 
   private
     { Private declarations }
@@ -147,15 +156,16 @@ var
   Image_Width,
   Image_Height,
   Image_Bitdepth : longword;
-  fStream, oStream, tmpStream : TStream;
+  fStream, oStream, tmpStream, tmpStream2 : TStream;
   Image_ControlSize : integer;
   Image_BMP : TBMP;
   ImageName : widestring;
   GlobalOffset : longint;
   Palette : TPalette;
+  TGAPalette : TTGAPalette;
 
-const GRAPS_VERSION = $20150128;
-      GRAPS_BUILD   = 28;
+const GRAPS_VERSION = $20170405;
+      GRAPS_BUILD   = 29;
 
 implementation
 
@@ -235,6 +245,7 @@ begin
 //  if tmpStream <> nil then FreeAndNil(tmpStream);
 
   tmpStream := TMemoryStream.Create;
+  tmpStream2 := TMemoryStream.Create; // used for image transformations
 
   L_Graps_FinalOffset.Caption := inttostr(iStream.Size);
 
@@ -251,26 +262,48 @@ begin
    XYZ        := 1;
    Bitdepth   := Image_Bitdepth;
    StreamSize := Image_ControlSize;
+
+   with SB_Graps_ImageProperties.Panels do begin
+    Items[0].Text := inttostr(Width) + ' x ' + inttostr(Height);
+    Items[1].Text := inttostr(Bitdepth) + ' ' + AMS[aBits];
+   end;
+
   end;
 
   tmpStream.Seek(0,soBeginning);
 
-  with Image_BMP, tmpStream do begin
+  with Image_BMP do begin
 
-   Write(Image_BMP,SizeOf(Image_BMP));
+   tmpStream.Write(Image_BMP,SizeOf(Image_BMP));
 
    // 8 bit fix
    if BitDepth = 8 then begin
     // reading palette if exists
-    if CB_Graps_HasPalette.Checked then try
-     iStream.Seek(strtoint(E_Graps_PaletteOffset.Text),soBeginning);
-     iStream.Read(Palette,sizeof(Palette));
-    except
-     // failed to read palette
+    if CB_Graps_HasPalette.Checked then begin
+     case CB_Graps_Palette_Bitdepth.ItemIndex of
+     0 : try
+          iStream.Seek(strtoint(E_Graps_PaletteOffset.Text),soBeginning);
+          iStream.Read(Palette,sizeof(Palette));
+         except
+          // failed to read palette
+         end;
+     1: try
+          iStream.Seek(strtoint(E_Graps_PaletteOffset.Text),soBeginning);
+          iStream.Read(TGAPalette,sizeof(TGAPalette));
+          Palette := RGBPtoARGBP(TGAPalette); // Converting 24-bit TGA-alike palette to BMP-alike 32-bit one
+         except
+          // failed to read palette
+         end;
+     end;
     end
     // else generating a standard grayscale one
     else Palette := GrayscalePalette;
-    Write(Palette,SizeOf(Palette));
+
+    if CB_Graps_ColourSwap.Checked then begin
+     Palette := SwapColorsPalette(Palette,CB_Graps_ColourSwapMode.ItemIndex);
+    end;
+
+    tmpStream.Write(Palette,SizeOf(Palette));
    end;
 
    iStream.Seek(iPos,soBeginning);
@@ -278,13 +311,28 @@ begin
  { проверка на окончание файла и подсчёт }
    if Image_ControlSize > iStream.Size - iPos then begin
     if iPos <= iStream.Size then begin
-     CopyFrom(iStream,iStream.Size - iPos);
+     tmpStream2.CopyFrom(iStream,iStream.Size - iPos);
 
      SetLength(Dummy,Image_ControlSize - (iStream.Size - iPos));
 
-     Write(Dummy[0],Length(Dummy));
+     tmpStream2.Write(Dummy[0],Length(Dummy));
     end;// else E_Offset.Text := '0';
-   end else CopyFrom(iStream,Image_ControlSize);
+   end else tmpStream2.CopyFrom(iStream,Image_ControlSize);
+
+   if BitDepth > 8 then begin
+    if CB_GrapS_ColourSwap.Checked then begin
+     SwapColors(tmpStream2,Width,Height,BitDepth,CB_GrapS_ColourSwapMode.ItemIndex);
+     tmpStream2.Seek(0,soBeginning);
+    end;
+   end;
+
+ { Image transformation handling goes here }
+   if CB_GrapS_ImageFlipVertical.Checked then begin
+    VerticalFlipIO(tmpStream2,tmpStream,GetScanLineLen(Width,BitDepth),Height);
+   end else begin
+    tmpStream2.Seek(0,soBeginning);
+    tmpStream.CopyFrom(tmpStream2,tmpStream2.Size);
+   end;
 
  { HEX view code }
 //   iStream.Seek(iPos,soBeginning);
@@ -306,6 +354,7 @@ begin
 
  SetLength(Dummy,0);
  FreeAndNil(tmpStream);
+ FreeAndNil(tmpStream2);
 
 end;
 
@@ -564,6 +613,46 @@ end;
 procedure TGrapSForm.FormPaint(Sender: TObject);
 begin
   DragAcceptFiles(Handle, True);
+end;
+
+procedure TGrapSForm.CB_Graps_Palette_BitdepthChange(Sender: TObject);
+begin
+ if CB_Graps_HasPalette.Checked then try
+  if fStream <> nil then ReadRAWAndWriteBMP(fStream,strtoint(E_Graps_Offset.Text));
+ except
+ end;
+end;
+
+procedure TGrapSForm.CB_Graps_HasPaletteClick(Sender: TObject);
+begin
+ try
+  if fStream <> nil then ReadRAWAndWriteBMP(fStream,strtoint(E_Graps_Offset.Text));
+ except
+ end;
+end;
+
+procedure TGrapSForm.CB_GrapS_ImageFlipVerticalClick(Sender: TObject);
+begin
+ try
+  if fStream <> nil then ReadRAWAndWriteBMP(fStream,strtoint(E_Graps_Offset.Text));
+ except
+ end;
+end;
+
+procedure TGrapSForm.CB_GrapS_ColourSwapClick(Sender: TObject);
+begin
+ try
+  if fStream <> nil then ReadRAWAndWriteBMP(fStream,strtoint(E_Graps_Offset.Text));
+ except
+ end;
+end;
+
+procedure TGrapSForm.CB_GrapS_ColourSwapModeChange(Sender: TObject);
+begin
+ if CB_Graps_ColourSwap.Checked then try
+  if fStream <> nil then ReadRAWAndWriteBMP(fStream,strtoint(E_Graps_Offset.Text));
+ except
+ end;
 end;
 
 end.

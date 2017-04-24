@@ -1083,12 +1083,12 @@ end;
 
 procedure TMainForm.L_WWWClick(Sender: TObject);
 begin
- ShellExecute(handle, nil, 'http://wks.arai-kibou.ru/', nil, nil, sw_shownormal);
+ ShellExecuteW(handle, nil, pwidechar(L_WWW.Caption), nil, nil, sw_shownormal);
 end;
 
 procedure TMainForm.L_EMailClick(Sender: TObject);
 begin
- ShellExecute(handle, nil, 'mailto:winkillerstudio@gmail.com', nil, nil, sw_shownormal);
+ ShellExecuteW(handle, nil, pwidechar(L_EMail.Caption), nil, nil, sw_shownormal);
 end;
 
 procedure TMainForm.L_WWWMouseEnter(Sender: TObject);
@@ -1351,7 +1351,7 @@ end;
 
 procedure TMainForm.L_UsersManualClick(Sender: TObject);
 begin
- ShellExecute(handle, nil, pchar(string(WhereAreWe)+AMS[ReadMeFile]), nil, nil, sw_shownormal);
+ ShellExecuteW(handle, nil, pwidechar(WhereAreWe+AMS[ReadMeFile]), nil, nil, sw_shownormal);
 end;
 
 procedure TMainForm.L_UsersManualMouseEnter(Sender: TObject);

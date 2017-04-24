@@ -106,6 +106,7 @@ type
     B_DoCRC32: TButton;
     L_Arc_MissingSize: TLabelW;
     L_Arc_Missing: TLabelW;
+    PB_Hash: TProgressBar;
     procedure B_FileInfo_OKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -332,23 +333,29 @@ begin
 end;
 
 procedure TFileInfo_Form.B_DoCRC32Click(Sender: TObject);
+var Position64 : int64;
 begin
 //Sanity check
- if ArchiveStream <> nil then begin
-  if ArchiveStream.Size > 64 * 1024 then if MessageBox(handle,pchar(AMS[AHashHugeFileWarn]),pchar(AMS[AHashCRC32Confirm]),mb_yesno) <> mrYes then Exit;
+ if ArchiveStream <> nil then with MainForm do begin
+//  if ArchiveStream.Size > $40 then if MessageBoxW(handle,pwidechar(AMS[AHashHugeFileWarn]),pwidechar(AMS[AHashCRC32Confirm]),mb_yesno) <> mrYes then Exit;
   LogI(AMS[ICalculatingCRC32]);
-  E_ArchiveHex.Text := inttohex(CRC32(ArchiveStream),8);
+  PB_Hash.Max := ArchiveStream.Size;
+  Position64 := PB_Hash.Position;
+  E_ArchiveHex.Text := inttohex(CRC32(ArchiveStream,Position64),8);
   LogI(AMS[IDone]);
  end else LogW(AMS[WArchiveExtract]);
 end;
 
 procedure TFileInfo_Form.B_DoMD5Click(Sender: TObject);
+var Position64 : int64;
 begin
 //Sanity check
- if ArchiveStream <> nil then begin
-  if ArchiveStream.Size > 64 * 1024 then if MessageBox(handle,pchar(AMS[AHashHugeFileWarn]),pchar(AMS[AHashMD5Confirm]),mb_yesno) <> mrYes then Exit;
+ if ArchiveStream <> nil then with MainForm do begin
+//  if ArchiveStream.Size > $40 then if MessageBoxW(handle,pwidechar(AMS[AHashHugeFileWarn]),pwidechar(AMS[AHashMD5Confirm]),mb_yesno) <> mrYes then Exit;
   LogI(AMS[ICalculatingMD5]);
-  E_ArchiveMD5.Text := MD5DigestToStr(MD5Stream(ArchiveStream));
+  PB_Hash.Max := ArchiveStream.Size;
+  Position64 := PB_Hash.Position;
+  E_ArchiveMD5.Text := MD5DigestToStr(MD5Stream(ArchiveStream,Position64));
   LogI(AMS[IDone]);
  end else LogW(AMS[WArchiveExtract]);
 end;

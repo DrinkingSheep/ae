@@ -1,3 +1,25 @@
+  0.6.11.421 (2017.04.05) r83
+  =======================
+
+   * Fixed bug which prevented to calculate hashes for files larger than 4 GiB
+   
+   * Fixed broken hash calculation dialogue after moving code to Wide Strings
+
+   * GrapS: Bugfixes with handling of image streams with 32 and 24-bit palette
+
+   + GrapS: Added option to select between 32 and 24-bit palette
+   
+   + GrapS: Added option to flip image stream
+   
+   + GrapS: Added option to swap pixel colour order (RGB, BGR, etc.)
+
+
+  0.6.10.420 (2016.03.29) r82
+  =======================
+
+   + Added partial YU-RIS v4.54 archive sub-format support (requested by GottoZ)
+
+
   0.6.10.420 (2015.01.24) r81
   =======================
 

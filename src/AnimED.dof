@@ -110,25 +110,25 @@ IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=0
 MinorVer=6
-Release=10
-Build=420
+Release=11
+Build=421
 Debug=0
 PreRelease=0
 Special=0
 Private=0
 DLL=0
-Locale=1049
-CodePage=1251
+Locale=2057
+CodePage=1252
 [Version Info Keys]
-CompanyName=WKStudio
+CompanyName=The Contributors
 FileDescription=AE - VN Tools
-FileVersion=0.6.10.420
+FileVersion=0.6.11.421
 InternalName=AE.exe
-LegalCopyright=© 2007-2016 WKStudio and The Contributors.
+LegalCopyright=© 2007-2017 The Contributors.
 LegalTrademarks=This software is free. Please see License for details.
 OriginalFilename=Ever17ED.exe
 ProductName=Unofficial VN SDK
-ProductVersion=2016.03.29
+ProductVersion=2017.04.05
 Comments=Meow meow meow~ :3
 [Excluded Packages]
 C:\Borland\Delphi7\Bin\JvBandsD7R.bpl=JVCL Band Objects Runtime Package
@@ -150,3 +150,18 @@ C:\Borland\Delphi7\Bin\JvTimeFrameworkD7R.bpl=JVCL Time Framework
 C:\Borland\Delphi7\Bin\JvUIBD7R.bpl=UIB - Unified Interbase Components
 C:\Borland\Delphi7\Bin\JvWizardD7R.bpl=JVCL Wizard Run Time Package
 C:\Borland\Delphi7\Bin\JvXPCtrlsD7R.bpl=JVCL XP Controls Runtime Package
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=.\format\archives;.\format\graphics;.\format;.\lib\pngobject;.\lib\gifimage;.\lib;.\lib\_jiskit\Unicode dialogs;.\lib\pngobject\obj;.\lib\_jiskit\Unicode components\
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[HistoryLists\hlSearchPath]
+Count=1
+Item0=.\format\archives;.\format\graphics;.\format;.\lib\pngobject;.\lib\gifimage;.\lib;.\lib\_jiskit\Unicode dialogs;.\lib\pngobject\obj;.\lib\_jiskit\Unicode components;.\lib\credits;.\lib\delphix\Source
+[HistoryLists\hlUnitOutputDirectory]
+Count=1
+Item0=.\precompiled
+[HistoryLists\hlOutputDirectorry]
+Count=1
+Item0=..\

@@ -1,6 +1,6 @@
 object FileInfo_Form: TFileInfo_Form
-  Left = 865
-  Top = 116
+  Left = 848
+  Top = 336
   Width = 369
   Height = 505
   BorderIcons = [biSystemMenu, biMaximize]
@@ -29,7 +29,7 @@ object FileInfo_Form: TFileInfo_Form
     Top = 6
     Width = 349
     Height = 435
-    ActivePage = TS_Info_File
+    ActivePage = TS_Info_Hashes
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     object TS_Info_File: TTabSheet
@@ -780,6 +780,14 @@ object FileInfo_Form: TFileInfo_Form
           TabOrder = 1
           OnClick = B_DoCRC32Click
         end
+      end
+      object PB_Hash: TProgressBar
+        Left = 11
+        Top = 120
+        Width = 317
+        Height = 13
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 2
       end
     end
   end
